@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class MealTestData {
@@ -16,4 +17,16 @@ public class MealTestData {
             new Meal(START_SEQ + 5, LocalDateTime.of(2018, 10, 17, 10, 0), "завтрак", 600),
             new Meal(START_SEQ + 6, LocalDateTime.of(2018, 10, 17, 15, 0), "обед", 1000),
             new Meal(START_SEQ + 7, LocalDateTime.of(2018, 10, 17, 19, 0), "ужин", 550));
+
+    public static void assertMatch(Meal actual, Meal expected) {
+        assertThat(actual).isEqualToComparingFieldByField(expected);
+    }
+
+    public static void assertMatch(Iterable<Meal> actual, Meal... expected) {
+        assertMatch(actual, Arrays.asList(expected));
+    }
+
+    public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
+        assertThat(actual).usingFieldByFieldElementComparator().isEqualTo(expected);
+    }
 }

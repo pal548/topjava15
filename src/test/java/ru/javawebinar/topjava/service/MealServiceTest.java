@@ -14,12 +14,9 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
@@ -39,26 +36,26 @@ public class MealServiceTest {
     public void createAndGet() {
         Meal meal = mealService.create(new Meal(LocalDateTime.of(2018, 10, 18, 10, 0), "тестовый обед", 1000), USER_ID);
         Meal meal2 = mealService.get(meal.getId(), USER_ID);
-        assertEquals(meal, meal2);
+        assertMatch(meal2, meal);
     }
 
     @Test(expected = NotFoundException.class)
     public void delete() {
         mealService.delete(MEAL_1.getId(), USER_ID);
-        assertNull(mealService.get(MEAL_1.getId(), USER_ID));
+        mealService.get(MEAL_1.getId(), USER_ID);
     }
 
     @Test
     public void getBetweenDates() {
         List<Meal> meals = mealService.getBetweenDates(LocalDate.of(2018, 10, 16), LocalDate.of(2018, 10, 16), USER_ID);
-        assertEquals(Arrays.asList(MEAL_3, MEAL_2, MEAL_1), meals);
+        assertMatch(meals, MEAL_3, MEAL_2, MEAL_1);
     }
 
     @Test
     public void getBetweenDateTimes() {
         List<Meal> meals = mealService.getBetweenDateTimes(
                 LocalDateTime.of(2018, 10, 16, 13, 0), LocalDateTime.of(2018, 10, 16, 15, 0), USER_ID);
-        assertEquals(MEAL_2, meals.get(0));
+        assertMatch(meals.get(0), MEAL_2);
     }
 
     @Test
@@ -66,7 +63,7 @@ public class MealServiceTest {
         List<Meal> meals = mealService.getAll(USER_ID);
         List<Meal> meals_orig = new ArrayList<>(MEALS);
         meals_orig.sort(Comparator.comparing(Meal::getDateTime).reversed());
-        assertEquals(meals_orig, meals);
+        assertMatch(meals, meals_orig);
     }
 
     @Test
@@ -76,7 +73,7 @@ public class MealServiceTest {
         meal.setDateTime(LocalDateTime.of(2000,1,1,1,1));
         meal.setCalories(1);
         mealService.update(meal, USER_ID);
-        assertEquals(meal, mealService.get(meal.getId(), USER_ID));
+        assertMatch(mealService.get(meal.getId(), USER_ID), meal);
     }
 
     @Test(expected = NotFoundException.class)
