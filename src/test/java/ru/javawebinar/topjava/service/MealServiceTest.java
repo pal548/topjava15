@@ -71,16 +71,12 @@ public class MealServiceTest {
 
     @Test
     public void update() {
-        updateOfUser(USER_ID);
-    }
-
-    private void updateOfUser(int userId) {
         Meal meal = new Meal(MEAL_1);
         meal.setDescr("новое описание");
         meal.setDateTime(LocalDateTime.of(2000,1,1,1,1));
         meal.setCalories(1);
-        mealService.update(meal, userId);
-        assertEquals(meal, mealService.get(meal.getId(), userId));
+        mealService.update(meal, USER_ID);
+        assertEquals(meal, mealService.get(meal.getId(), USER_ID));
     }
 
     @Test(expected = NotFoundException.class)
@@ -95,7 +91,7 @@ public class MealServiceTest {
 
     @Test(expected = NotFoundException.class)
     public void updateOfOtherUser() {
-        updateOfUser(ADMIN_ID);
+        mealService.update(MEAL_1, ADMIN_ID);
     }
 
     @Test(expected = DuplicateKeyException.class)
