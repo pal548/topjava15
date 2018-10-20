@@ -3,13 +3,16 @@ package ru.javawebinar.topjava.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Objects;
 
 public class Meal extends AbstractBaseEntity {
-    private final LocalDateTime dateTime;
+    private LocalDateTime dateTime;
 
-    private final String description;
+    private String description;
 
-    private final int calories;
+    private int calories;
+
+    public Meal() {}
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
         this(null, dateTime, description, calories);
@@ -20,6 +23,22 @@ public class Meal extends AbstractBaseEntity {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
+    }
+
+    public Meal(Meal meal) {
+        this(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories());
+    }
+
+    public void setDateTime(LocalDateTime ldt) {
+        dateTime = ldt;
+    }
+
+    public void setDescr(String description) {
+        this.description = description;
+    }
+
+    public void setCalories(int cal) {
+        calories = cal;
     }
 
     public LocalDateTime getDateTime() {
@@ -40,6 +59,22 @@ public class Meal extends AbstractBaseEntity {
 
     public LocalTime getTime() {
         return dateTime.toLocalTime();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Meal)) return false;
+        if (!super.equals(o)) return false;
+        Meal meal = (Meal) o;
+        return getCalories() == meal.getCalories() &&
+                Objects.equals(getDateTime(), meal.getDateTime()) &&
+                Objects.equals(getDescription(), meal.getDescription());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getDateTime(), getDescription(), getCalories());
     }
 
     @Override
