@@ -30,12 +30,28 @@ public class JpaMealRepositoryImpl implements MealRepository {
             em.persist(meal);
             return meal;
         } else {
-            Meal existing = em.find(Meal.class, meal.getId());
+            /*Meal existing = em.find(Meal.class, meal.getId());
             if (existing.getUser().getId() != userId) {
                 return null;
             }
             meal.setUser(existing.getUser());
-            return em.merge(meal);
+            return em.merge(meal);*/
+            if (em.createQuery("update Meal m set \n" +
+                    "    m.dateTime = :dateTime, \n" +
+                    "    m.description = :descr, \n" +
+                    "    m.calories = :cal\n" +
+                    "where m.id = :id \n" +
+                    "      and m.user.id = :userId")
+                    .setParameter("dateTime", meal.getDateTime())
+                    .setParameter("descr", meal.getDescription())
+                    .setParameter("cal", meal.getCalories())
+                    .setParameter("id", meal.getId())
+                    .setParameter("userId", userId)
+                    .executeUpdate() == 1) {
+                return meal;
+            } else {
+                return null;
+            }
         }
     }
 
