@@ -24,15 +24,17 @@ public class JpaMealRepositoryImpl implements MealRepository {
     public Meal save(Meal meal, int userId) {
         if (meal.isNew()) {
             if (meal.getUser() == null) {
-                User user = em.find(User.class, userId);
-                meal.setUser(user);
+                User ref = em.getReference(User.class, userId);
+                meal.setUser(ref);
             }
             em.persist(meal);
             return meal;
         } else {
-            if (meal.getUser().getId() != userId) {
-                throw new NotFoundException("The meal is of other user");
+            Meal existing = em.find(Meal.class, meal.getId());
+            if (existing.getUser().getId() != userId) {
+                return null;
             }
+            meal.setUser(existing.getUser());
             return em.merge(meal);
         }
     }
