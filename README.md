@@ -1,5 +1,5 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1f9504e4f58e4dd78202602a46d72fcc)](https://app.codacy.com/app/javawebinar/topjava)
-[![Build Status](https://travis-ci.org/JavaWebinar/topjava.svg?branch=master)](https://travis-ci.org/JavaWebinar/topjava)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/380a19ba93c44330a9835a5965dddda4)](https://www.codacy.com/app/pal548/topjava15?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=pal548/topjava15&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/pal548/topjava15.svg?branch=master)](https://travis-ci.org/pal548/topjava15)
 
 Java Enterprise Online Project
 ===============================
