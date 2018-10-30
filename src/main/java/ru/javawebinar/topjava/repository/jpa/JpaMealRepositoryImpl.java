@@ -30,13 +30,13 @@ public class JpaMealRepositoryImpl implements MealRepository {
             em.persist(meal);
             return meal;
         } else {
-            /*Meal existing = em.find(Meal.class, meal.getId());
+            Meal existing = em.find(Meal.class, meal.getId());
             if (existing.getUser().getId() != userId) {
                 return null;
             }
             meal.setUser(existing.getUser());
-            return em.merge(meal);*/
-            if (em.createQuery("update Meal m set \n" +
+            return em.merge(meal);
+            /*if (em.createQuery("update Meal m set \n" +
                     "    m.dateTime = :dateTime, \n" +
                     "    m.description = :descr, \n" +
                     "    m.calories = :cal\n" +
@@ -51,7 +51,7 @@ public class JpaMealRepositoryImpl implements MealRepository {
                 return meal;
             } else {
                 return null;
-            }
+            }*/
         }
     }
 

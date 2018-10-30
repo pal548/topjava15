@@ -15,10 +15,16 @@ public class SimpleRule implements TestRule {
             @Override
             public void evaluate() throws Throwable {
                 long start = System.currentTimeMillis();
-                log.debug("before " + description.getMethodName());
+                log.debug("\n\n" +
+                        "*******************************************************************\n" +
+                        "* starting - " + "\u001B[31m" + description.getMethodName() + "()" + "\u001B[0m\n" +
+                        "*******************************************************************");
                 statement.evaluate();
                 long end = System.currentTimeMillis();
-                log.debug("after " +  description.getMethodName() + ", took " + (end - start) + " ms");
+                log.debug("\n" +
+                        "*******************************************************************\n" +
+                        description.getMethodName() + "() took " + "\u001B[31m" + (end - start) + "\u001B[0m" + " ms" + "\n" +
+                        "*******************************************************************");
             }
         };
     }

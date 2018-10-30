@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -11,7 +12,8 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.rules.SimpleRule;
+import ru.javawebinar.topjava.rules.MyStopWatch;
+import ru.javawebinar.topjava.rules.SummaryPrinter;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
@@ -29,14 +31,14 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
 
+    @ClassRule
+    public static final SummaryPrinter summaryPrinter = new SummaryPrinter();
+
     @Rule
-    public SimpleRule rule = new SimpleRule();
+    public final MyStopWatch stopWatch = new MyStopWatch(summaryPrinter.getMap());
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-
-    // ожидаемое исключение
-    private static final Class<? extends Throwable> exception = NotFoundException.class;
 
     static {
         SLF4JBridgeHandler.install();
@@ -53,7 +55,7 @@ public class MealServiceTest {
 
     @Test
     public void deleteNotFound() throws Exception {
-        expectedException.expect(exception);
+        expectedException.expect(NotFoundException.class);
         service.delete(MEAL1_ID, 1);
     }
 
@@ -72,7 +74,7 @@ public class MealServiceTest {
 
     @Test
     public void getNotFound() throws Exception {
-        expectedException.expect(exception);
+        expectedException.expect(NotFoundException.class);
         service.get(MEAL1_ID, ADMIN_ID);
     }
 
@@ -85,7 +87,7 @@ public class MealServiceTest {
 
     @Test
     public void updateNotFound() throws Exception {
-        expectedException.expect(exception);
+        expectedException.expect(NotFoundException.class);
         service.update(MEAL1, ADMIN_ID);
     }
 
