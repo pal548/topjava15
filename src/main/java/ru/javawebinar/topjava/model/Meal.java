@@ -7,14 +7,14 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @NamedQueries({
-        @NamedQuery(name = Meal.BY_ID_USER_ID, query = "select m from Meal m WHERE m.id=:id and m.user.id = :user_id"),
-        @NamedQuery(name = Meal.ALL_BY_USER_ID, query = "select m from Meal m WHERE m.user.id = :user_id order by m.dateTime desc"),
-        @NamedQuery(name = Meal.ALL_BETWEEN, query = "select m from Meal m \n" +
+        @NamedQuery(name = Meal.BY_ID_USER_ID, query = "SELECT m FROM Meal m WHERE m.id=:id AND m.user.id = :user_id"),
+        @NamedQuery(name = Meal.ALL_BY_USER_ID, query = "SELECT m FROM Meal m WHERE m.user.id = :user_id ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.ALL_BETWEEN, query = "SELECT m FROM Meal m \n" +
                 "WHERE m.user.id = :user_id \n" +
-                "      and m.dateTime >= :d1 \n" +
-                "      and m.dateTime <= :d2 \n" +
-                "order by m.dateTime desc"),
-        @NamedQuery(name = Meal.DELETE, query = "delete from Meal m where m.id = :id and m.user.id = :user_id"),
+                "      AND m.dateTime >= :d1 \n" +
+                "      AND m.dateTime <= :d2 \n" +
+                "ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id = :id AND m.user.id = :user_id"),
 })
 @Entity
 @Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals.meals_user_id_date_time_uindex")})

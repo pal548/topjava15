@@ -1,12 +1,10 @@
 package ru.javawebinar.topjava.repository.jpa;
 
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -14,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
+@Transactional(readOnly = true)
 public class JpaMealRepositoryImpl implements MealRepository {
 
     @PersistenceContext
@@ -30,28 +29,12 @@ public class JpaMealRepositoryImpl implements MealRepository {
             em.persist(meal);
             return meal;
         } else {
-            Meal existing = em.find(Meal.class, meal.getId());
-            if (existing.getUser().getId() != userId) {
+            Meal existing = get(meal.getId(), userId);
+            if (existing == null) {
                 return null;
             }
             meal.setUser(existing.getUser());
             return em.merge(meal);
-            /*if (em.createQuery("update Meal m set \n" +
-                    "    m.dateTime = :dateTime, \n" +
-                    "    m.description = :descr, \n" +
-                    "    m.calories = :cal\n" +
-                    "where m.id = :id \n" +
-                    "      and m.user.id = :userId")
-                    .setParameter("dateTime", meal.getDateTime())
-                    .setParameter("descr", meal.getDescription())
-                    .setParameter("cal", meal.getCalories())
-                    .setParameter("id", meal.getId())
-                    .setParameter("userId", userId)
-                    .executeUpdate() == 1) {
-                return meal;
-            } else {
-                return null;
-            }*/
         }
     }
 
@@ -66,10 +49,12 @@ public class JpaMealRepositoryImpl implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        return DataAccessUtils.singleResult(em.createNamedQuery(Meal.BY_ID_USER_ID, Meal.class)
-                .setParameter("id", id)
-                .setParameter("user_id", userId)
-                .getResultList());
+        Meal meal = em.find(Meal.class, id);
+        if (meal == null || meal.getUser().getId() != userId) {
+            return null;
+        } else {
+            return meal;
+        }
     }
 
     @Override
