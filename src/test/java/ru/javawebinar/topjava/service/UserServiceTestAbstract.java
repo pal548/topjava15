@@ -1,6 +1,8 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -15,6 +17,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.ActiveDbProfileResolver;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.rules.MyStopWatch;
+import ru.javawebinar.topjava.rules.SummaryPrinter;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.util.Collections;
@@ -31,6 +35,12 @@ import static ru.javawebinar.topjava.UserTestData.*;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 @ActiveProfiles(resolver = ActiveDbProfileResolver.class)
 public abstract class UserServiceTestAbstract {
+
+    @ClassRule
+    public static SummaryPrinter summaryPrinter = new SummaryPrinter();
+
+    @Rule
+    public MyStopWatch stopWatch = new MyStopWatch(summaryPrinter.getMap());
 
     static {
         // Only for postgres driver logging
