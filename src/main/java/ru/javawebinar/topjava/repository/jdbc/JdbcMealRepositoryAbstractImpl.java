@@ -14,11 +14,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 
-public abstract class JdbcMealRepositoryAbstractImpl implements MealRepository {
+public abstract class JdbcMealRepositoryAbstractImpl<T> implements MealRepository {
 
     protected abstract RowMapper<Meal> getRowMapper();
 
-    protected abstract <T> T getDateTimeForParams(LocalDateTime dateTime);
+    protected abstract T getDateTimeForParams(LocalDateTime dateTime);
 
     private RowMapper<Meal> rowMapper;
 

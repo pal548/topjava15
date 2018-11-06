@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 
 @Repository
 @Profile(Profiles.HSQL_DB)
-public class JdbcMealRepositoryHsqldbImpl extends JdbcMealRepositoryAbstractImpl {
+public class JdbcMealRepositoryHsqldbImpl extends JdbcMealRepositoryAbstractImpl<Timestamp> {
 
     @Autowired
     public JdbcMealRepositoryHsqldbImpl(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
