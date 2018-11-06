@@ -31,20 +31,8 @@ import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
-@ContextConfiguration({
-        "classpath:spring/spring-app.xml",
-        "classpath:spring/spring-db.xml"
-})
-@RunWith(SpringRunner.class)
-@Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-@ActiveProfiles(resolver = ActiveDbProfileResolver.class)
-public abstract class MealServiceTestAbstract {
 
-    @ClassRule
-    public static SummaryPrinter summaryPrinter = new SummaryPrinter();
-
-    @Rule
-    public MyStopWatch stopWatch = new MyStopWatch(summaryPrinter.getMap());
+public abstract class MealServiceTestAbstract extends ServiceTestAbstract {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

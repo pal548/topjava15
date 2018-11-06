@@ -36,21 +36,14 @@ public class DataJpaMealRepositoryImpl implements MealRepository {
     @Override
     @Transactional
     public boolean delete(int id, int userId) {
-        if (get(id, userId) == null) {
-            return false;
-        }
-        crudRepository.deleteById(id);
-        return true;
+        return crudRepository.deleteByIdAndUserId(id, userId) != 0;
     }
 
     @Override
     public Meal get(int id, int userId) {
         var meal = crudRepository.findById(id).orElse(null);
-        if (meal == null || meal.getUser().getId() == null || meal.getUser().getId() != userId) {
-            return null;
-        } else {
-            return meal;
-        }
+        return (meal == null || meal.getUser().getId() == null || meal.getUser().getId() != userId)
+                ? null : meal;
     }
 
     @Override

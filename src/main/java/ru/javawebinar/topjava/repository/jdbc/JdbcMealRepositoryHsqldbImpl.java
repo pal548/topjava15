@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.Profiles;
@@ -17,7 +16,7 @@ import java.time.LocalDateTime;
 
 @Repository
 @Profile(Profiles.HSQL_DB)
-public class JdbcMealRepositoryHsqldbImpl extends JdbcMealRepositoryPgImpl {
+public class JdbcMealRepositoryHsqldbImpl extends JdbcMealRepositoryAbstractImpl {
 
     @Autowired
     public JdbcMealRepositoryHsqldbImpl(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
@@ -25,7 +24,6 @@ public class JdbcMealRepositoryHsqldbImpl extends JdbcMealRepositoryPgImpl {
     }
 
     private static final class MealMapper implements RowMapper<Meal> {
-
         @Override
         public Meal mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new Meal(rs.getInt("id"),
@@ -41,7 +39,7 @@ public class JdbcMealRepositoryHsqldbImpl extends JdbcMealRepositoryPgImpl {
     }
 
     @Override
-    protected void addDateTimeToParamsMap(MapSqlParameterSource map, String paramName, LocalDateTime dateTime) {
-        map.addValue(paramName, Timestamp.valueOf(dateTime));
+    protected Timestamp getDateTimeForParams(LocalDateTime dateTime) {
+        return Timestamp.valueOf(dateTime);
     }
 }

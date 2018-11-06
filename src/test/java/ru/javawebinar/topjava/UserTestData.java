@@ -14,6 +14,7 @@ public class UserTestData {
 
     public static final User USER = new User(USER_ID, "User", "user@yandex.ru", "password", Role.ROLE_USER);
     public static final User ADMIN = new User(ADMIN_ID, "Admin", "admin@gmail.com", "admin", Role.ROLE_ADMIN);
+    //public static final User USER2 = new User(USER_ID + 1, "User2", "user2@gmail.com", "p@ssw0rd", Role.ROLE_USER);
 
     public static void assertMatch(User actual, User expected) {
         assertThat(actual).isEqualToIgnoringGivenFields(expected, "registered", "roles", "meals");
