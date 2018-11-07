@@ -22,6 +22,7 @@ public class SummaryPrinter implements TestRule {
             @Override
             public void evaluate() throws Throwable {
                 try {
+                    map.clear();
                     base.evaluate();
                 } finally {
                     printSummary();
