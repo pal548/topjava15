@@ -57,6 +57,19 @@
         <bean id="namedJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
             <constructor-arg ref="dataSource"/>
         </bean>
+
+        <!-- https://www.journaldev.com/2603/spring-transaction-management-jdbc-example -->
+        <!-- Enable Annotation based Declarative Transaction Management -->
+        <!--<tx:annotation-driven proxy-target-class="true" transaction-manager="transactionManager" />-->
+        <tx:annotation-driven />
+
+        <!-- Creating TransactionManager Bean, since JDBC we are creating of type
+            DataSourceTransactionManager -->
+        <bean id="transactionManager"
+              class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+            <property name="dataSource" ref="dataSource" />
+        </bean>
+
     </beans>
 
     <beans profile="jpa,datajpa">
