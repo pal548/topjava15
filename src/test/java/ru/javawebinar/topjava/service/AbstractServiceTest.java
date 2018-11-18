@@ -47,13 +47,6 @@ abstract public class AbstractServiceTest {
         SLF4JBridgeHandler.install();
     }
 
-    @Test
-    public void testValidation() throws Exception {
-        Assume.assumeTrue("проверяем валидацию только в jpa и datajpa",
-                Arrays.asList(environment.getActiveProfiles()).contains(Profiles.DATAJPA)
-                || Arrays.asList(environment.getActiveProfiles()).contains(Profiles.JPA));
-    }
-
     //  Check root cause in JUnit: https://github.com/junit-team/junit4/pull/778
     public <T extends Throwable> void validateRootCause(Runnable runnable, Class<T> exceptionClass) {
         try {
@@ -62,5 +55,11 @@ abstract public class AbstractServiceTest {
         } catch (Exception e) {
             Assert.assertThat(getRootCause(e), instanceOf(exceptionClass));
         }
+    }
+
+    protected void assumeNotJdbc() {
+        Assume.assumeTrue("пропускаем тест валидации, т.к. активный профиль - jdbc",
+                Arrays.asList(environment.getActiveProfiles()).contains(Profiles.DATAJPA)
+                        || Arrays.asList(environment.getActiveProfiles()).contains(Profiles.JPA));
     }
 }
