@@ -2,9 +2,9 @@ package ru.javawebinar.topjava.repository.jdbc;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
@@ -13,23 +13,14 @@ import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
 @Transactional(readOnly = true)
 public class JdbcUserRepositoryImpl implements UserRepository {
 
-    private static final String SQL_GET_USERS =
-            "SELECT u.*,\n" +
-                    "       (SELECT string_agg(r.role, ',')\n" +
-                    "        FROM user_roles r \n" +
-                    "        WHERE r.user_id = u.id) AS roles\n" +
-                    "FROM users u \n" +
-                    "WHERE (u.id=:id OR :id = -1)\n" +
-                    "      AND (u.email = :email or :email = '')\n" +
-                    "ORDER BY u.name, u.email";
+    private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -88,39 +79,41 @@ public class JdbcUserRepositoryImpl implements UserRepository {
 
     @Override
     public User get(int id) {
-        return DataAccessUtils.singleResult(getUsers(id, ""));
+        var users = jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
+        var user = DataAccessUtils.singleResult(users);
+        if (user != null) {
+            getUserRoles(user);
+        }
+        return user;
     }
 
     @Override
     public User getByEmail(String email) {
-        return DataAccessUtils.singleResult(getUsers(-1, email));
+        var users = jdbcTemplate.query("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
+        var user = DataAccessUtils.singleResult(users);
+        if (user != null) {
+            getUserRoles(user);
+        }
+        return user;
+    }
+
+    private void getUserRoles(User user) {
+        var roles = jdbcTemplate.query("SELECT * FROM user_roles WHERE user_id = ? ",
+                (rs, i) -> Role.valueOf(rs.getString("role")), user.getId());
+        user.setRoles(roles);
     }
 
     @Override
     public List<User> getAll() {
-        return getUsers(-1, "");
+        var users = jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
+        Map<Integer, Set<Role>> map = new HashMap<>();
+        jdbcTemplate.query("SELECT * FROM user_roles ",
+                rs -> {
+                    var role = Role.valueOf(rs.getString("role"));
+                    map.computeIfAbsent(rs.getInt("user_id"), k -> new HashSet<>()).add(role);
+                });
+        users.forEach(user -> user.setRoles(map.get(user.getId())));
+        return users;
     }
 
-    private List<User> getUsers(int id, String email) {
-        return namedParameterJdbcTemplate.query(SQL_GET_USERS,
-                new MapSqlParameterSource()
-                        .addValue("id", id)
-                        .addValue("email", email),
-                (rs, i) -> {
-                    User user = new User(
-                            rs.getInt("id"),
-                            rs.getString("name"),
-                            rs.getString("email"),
-                            rs.getString("password"),
-                            rs.getInt("calories_per_day"),
-                            rs.getBoolean("enabled"),
-                            rs.getDate("registered"),
-                            null);
-                    var roles = Arrays.stream(rs.getString("roles").split(","))
-                            .map(Role::valueOf)
-                            .collect(Collectors.toSet());
-                    user.setRoles(roles);
-                    return user;
-                });
-    }
 }
