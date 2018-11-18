@@ -11,7 +11,7 @@
 <section>
     <spring:message var="titleEdit" code='meal.editMeal'/>
     <spring:message var="titleCreate" code='meal.createMeal'/>
-    <h2>${action == 'create' ? titleCreate : titleEdit}</h2>
+    <h2>${meal.id == null ? titleCreate : titleEdit}</h2>
     <hr>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
     <form method="post" action="">

@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.javawebinar.topjava.model.Meal;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -37,21 +35,23 @@ public class JspMealController extends AbstractMealController {
         return "redirect:.." + MEALS_PATH;
     }
 
-    @GetMapping({"/create", "/update"})
-    public String createUpdateMeal(Model model, HttpServletRequest request) {
-        var path = request.getServletPath();
-        var action = path.substring(path.lastIndexOf("/")+1);
-        final var meal = "create".equals(action) ?
-                new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
-                super.get(getId(request));
-        model.addAttribute("action", action);
+    @GetMapping("/create")
+    public String createMeal(Model model) {
+        var meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
+        model.addAttribute("meal", meal);
+        return "mealForm";
+    }
+
+    @GetMapping("/update")
+    public String updateMeal(Model model, HttpServletRequest request) {
+        var meal = super.get(getId(request));
         model.addAttribute("meal", meal);
         return "mealForm";
     }
 
     @PostMapping({"/create", "/update"})
-    public String postMeals(HttpServletRequest request) throws ServletException, IOException {
-        Meal meal = new Meal(
+    public String postMeal(HttpServletRequest request) {
+        var meal = new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));

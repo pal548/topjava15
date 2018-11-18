@@ -18,6 +18,8 @@
         <jdbc:script encoding="utf-8" location="classpath:db/populateDB.sql"/>
     </jdbc:initialize-database>
 
+    <tx:annotation-driven />
+
     <!-- Choose profile from (hsqldb, postgres) and (jdbc,datajpa,jpa) -->
 
     <beans profile="hsqldb">
@@ -61,7 +63,7 @@
         <!-- https://www.journaldev.com/2603/spring-transaction-management-jdbc-example -->
         <!-- Enable Annotation based Declarative Transaction Management -->
         <!--<tx:annotation-driven proxy-target-class="true" transaction-manager="transactionManager" />-->
-        <tx:annotation-driven />
+
 
         <!-- Creating TransactionManager Bean, since JDBC we are creating of type
             DataSourceTransactionManager -->
@@ -107,8 +109,6 @@
                 </bean>
             </property>
         </bean>
-
-        <tx:annotation-driven/>
 
         <!-- Transaction manager for a single JPA EntityManagerFactory (alternative to JTA) -->
         <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
