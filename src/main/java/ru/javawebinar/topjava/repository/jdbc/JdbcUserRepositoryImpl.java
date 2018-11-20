@@ -81,9 +81,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
     public User get(int id) {
         var users = jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
         var user = DataAccessUtils.singleResult(users);
-        if (user != null) {
-            getUserRoles(user);
-        }
+        getUserRoles(user);
         return user;
     }
 
@@ -91,16 +89,16 @@ public class JdbcUserRepositoryImpl implements UserRepository {
     public User getByEmail(String email) {
         var users = jdbcTemplate.query("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
         var user = DataAccessUtils.singleResult(users);
-        if (user != null) {
-            getUserRoles(user);
-        }
+        getUserRoles(user);
         return user;
     }
 
     private void getUserRoles(User user) {
-        var roles = jdbcTemplate.query("SELECT * FROM user_roles WHERE user_id = ? ",
-                (rs, i) -> Role.valueOf(rs.getString("role")), user.getId());
-        user.setRoles(roles);
+        if (user != null) {
+            var roles = jdbcTemplate.query("SELECT * FROM user_roles WHERE user_id = ? ",
+                    (rs, i) -> Role.valueOf(rs.getString("role")), user.getId());
+            user.setRoles(roles);
+        }
     }
 
     @Override
@@ -110,7 +108,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
         jdbcTemplate.query("SELECT * FROM user_roles ",
                 rs -> {
                     var role = Role.valueOf(rs.getString("role"));
-                    map.computeIfAbsent(rs.getInt("user_id"), k -> new HashSet<>()).add(role);
+                    map.computeIfAbsent(rs.getInt("user_id"), k -> EnumSet.noneOf(Role.class)).add(role);
                 });
         users.forEach(user -> user.setRoles(map.get(user.getId())));
         return users;
