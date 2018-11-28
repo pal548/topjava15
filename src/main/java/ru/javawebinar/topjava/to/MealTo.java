@@ -1,6 +1,9 @@
 package ru.javawebinar.topjava.to;
 
+import ru.javawebinar.topjava.model.Meal;
+
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class MealTo {
     private final Integer id;
@@ -19,6 +22,10 @@ public class MealTo {
         this.description = description;
         this.calories = calories;
         this.excess = excess;
+    }
+
+    public MealTo(Meal meal, boolean excess) {
+        this(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
 
     public Integer getId() {
@@ -50,5 +57,22 @@ public class MealTo {
                 ", calories=" + calories +
                 ", excess=" + excess +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MealTo)) return false;
+        MealTo mealTo = (MealTo) o;
+        return getCalories() == mealTo.getCalories() &&
+                isExcess() == mealTo.isExcess() &&
+                Objects.equals(getId(), mealTo.getId()) &&
+                Objects.equals(getDateTime(), mealTo.getDateTime()) &&
+                Objects.equals(getDescription(), mealTo.getDescription());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getDateTime(), getDescription(), getCalories(), isExcess());
     }
 }
