@@ -1,8 +1,18 @@
 const ajaxUrl = "ajax/profile/meals/";
 let datatableApi;
 
+function getAjaxUrl() {
+    return ajaxUrl + "?" + $("#filterForm").serialize();
+}
+
+
 // $(document).ready(function () {
 $(function () {
+    $("#filterFormSubmitBtn").click(function (event) {
+        event.preventDefault();
+        updateTable();
+    });
+
     datatableApi = $("#datatable").DataTable({
         "paging": false,
         "info": true,

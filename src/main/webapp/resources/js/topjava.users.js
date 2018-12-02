@@ -1,6 +1,10 @@
 const ajaxUrl = "ajax/admin/users/";
 let datatableApi;
 
+function getAjaxUrl() {
+    return ajaxUrl;
+}
+
 // $(document).ready(function () {
 $(function () {
     datatableApi = $("#datatable").DataTable({
