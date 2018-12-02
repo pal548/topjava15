@@ -5,8 +5,17 @@ function getAjaxUrl() {
     return ajaxUrl;
 }
 
+/*function userEnabledOnChange(id) {
+    console.log($(this).attr("id"));
+    console.log(id);
+}*/
+
 // $(document).ready(function () {
 $(function () {
+
+    // console.log($(".enabled-chb"));
+
+
     datatableApi = $("#datatable").DataTable({
         "paging": false,
         "info": true,
@@ -43,4 +52,19 @@ $(function () {
         ]
     });
     makeEditable();
+
+    $(".enabled-chb").change(function () {
+        let id = $(this).attr("data-id");
+        let checked = this.checked;
+        console.log(checked);
+        $.ajax({
+            type: "POST",
+            url: ajaxUrl + id + "/set-enabled",
+            data: "checked=" + checked.toString()
+        }).done(function () {
+            updateTable();
+            successNoty("Updated");
+        })
+
+    });
 });

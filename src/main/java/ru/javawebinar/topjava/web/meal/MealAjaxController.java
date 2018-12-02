@@ -49,4 +49,4 @@ public class MealAjaxController extends AbstractMealController {
             super.create(meal);
         }
     }
-    }
+}
