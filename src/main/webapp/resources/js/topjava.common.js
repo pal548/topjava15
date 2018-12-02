@@ -1,6 +1,6 @@
 function makeEditable() {
     $(".delete").click(function () {
-        deleteRow($(this).attr("id"));
+        deleteRow($(this).attr("data-id"));
     });
 
     $(document).ajaxError(function (event, jqXHR, options, jsExc) {
@@ -58,7 +58,7 @@ function successNoty(text) {
     closeNoty();
     new Noty({
         text: "<span class='fa fa-lg fa-check'></span> &nbsp;" + text,
-        type: 'success',
+        type: "success",
         layout: "bottomRight",
         timeout: 1000
     }).show();
