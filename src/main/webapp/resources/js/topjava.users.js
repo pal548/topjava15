@@ -56,11 +56,10 @@ $(function () {
     $(".enabled-chb").change(function () {
         let id = $(this).attr("data-id");
         let checked = this.checked;
-        console.log(checked);
         $.ajax({
             type: "POST",
             url: ajaxUrl + id + "/set-enabled",
-            data: "checked=" + checked.toString()
+            data: "checked=" + checked
         }).done(function () {
             updateTable();
             successNoty("Updated");
