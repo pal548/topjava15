@@ -56,13 +56,14 @@ $(function () {
     $(".enabled-chb").change(function () {
         let id = $(this).attr("data-id");
         let checked = this.checked;
+        let tr = $(this).closest("tr");
         $.ajax({
             type: "POST",
-            url: ajaxUrl + id + "/set-enabled",
+            url: ajaxUrl + id,
             data: "checked=" + checked
         }).done(function () {
-            updateTable();
-            successNoty("Updated");
+            tr.attr("data-userEnabled", checked);
+            successNoty(checked ? "Enabled" : "Disabled");
         })
 
     });

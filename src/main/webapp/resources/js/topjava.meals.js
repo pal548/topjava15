@@ -1,16 +1,25 @@
 const ajaxUrl = "ajax/profile/meals/";
+let filterEnabled;
 let datatableApi;
 
 function getAjaxUrl() {
-    return ajaxUrl + "?" + $("#filterForm").serialize();
+    return ajaxUrl + (filterEnabled ? "filtered?" + $("#filterForm").serialize() : "");
 }
 
 
 // $(document).ready(function () {
 $(function () {
-    $("#filterFormSubmitBtn").click(function (event) {
+    $("#filterForm").on('submit', function (event) {
         event.preventDefault();
+        filterEnabled = true;
         updateTable();
+    });
+
+    $("#filterForm").on('reset', function (event) {
+        filterEnabled = false;
+        setTimeout(function () {
+            updateTable();
+        });
     });
 
     datatableApi = $("#datatable").DataTable({
