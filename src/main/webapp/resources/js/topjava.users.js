@@ -85,6 +85,14 @@ $(function () {
             }),
             updateTable: function () {
                 $.get(userAjaxUrl, updateTableByData);
+            },
+            getSerializedFormData : function () {
+                return $('#detailsForm').serialize();
+            },
+            fillEditFormBeforeUpdate : function (data) {
+                $.each(data, function (key, value) {
+                    form.find("input[name='" + key + "']").val(value);
+                });
             }
         }
     );
