@@ -85,7 +85,11 @@ public class MealTo extends BaseTo {
         this.description = description;
     }
 
-    public void setCalories(int calories) {
+    /*public void setCalories(int calories) {
         this.calories = calories;
+    }*/
+
+    public void setCalories(String str) {
+        this.calories = (str == null) || str.isEmpty() ? 0 : Integer.valueOf(str);
     }
 }
