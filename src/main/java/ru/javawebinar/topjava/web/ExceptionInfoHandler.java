@@ -7,6 +7,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,9 +42,19 @@ public class ExceptionInfoHandler {
     }
 
     @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)  // 422
-    @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class})
+    @ExceptionHandler({IllegalRequestDataException.class,
+            MethodArgumentTypeMismatchException.class,
+            HttpMessageNotReadableException.class})
     public ErrorInfo illegalRequestDataError(HttpServletRequest req, Exception e) {
         return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
+    }
+
+    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)  // 422
+    @ExceptionHandler(BindException.class)
+    public ErrorInfo ValidationError(HttpServletRequest req, BindException e) {
+        ErrorType errorType = VALIDATION_ERROR;
+        log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), ValidationUtil.getRootCause(e).toString());
+        return new ErrorInfo(req.getRequestURL(), errorType, ValidationUtil.getErrorResponse(e.getBindingResult()));
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
