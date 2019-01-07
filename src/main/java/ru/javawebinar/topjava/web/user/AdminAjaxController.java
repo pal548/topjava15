@@ -38,7 +38,8 @@ public class AdminAjaxController extends AbstractUserController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createOrUpdate(@Valid UserTo userTo) {
+    @ResponseStatus(value = HttpStatus.OK)
+    public void createOrUpdate(@Valid UserTo userTo) {
 //        if (result.hasErrors()) {
 //            // TODO change to exception handler
 //            return ValidationUtil.getErrorResponse(result);
@@ -48,7 +49,7 @@ public class AdminAjaxController extends AbstractUserController {
         } else {
             super.update(userTo, userTo.getId());
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        //return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
