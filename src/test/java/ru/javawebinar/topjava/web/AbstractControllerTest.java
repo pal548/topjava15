@@ -77,7 +77,7 @@ abstract public class AbstractControllerTest {
         }
     }
 
-    protected <T> void doTestValidation(T obj, String field) throws Exception {
+    protected <T> void doTestValidation(String field, T obj) throws Exception {
         ResultActions action = mockMvc.perform(post(getUrl())
                 .with(userHttpBasic(ADMIN))
                 .contentType(MediaType.APPLICATION_JSON)

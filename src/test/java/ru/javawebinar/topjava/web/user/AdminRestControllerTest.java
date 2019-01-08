@@ -122,13 +122,13 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testValidationFail() throws Exception {
-        doTestValidation(new User(null, "1", "e@mail.com", "password", 2000, Role.ROLE_USER), "name");
-        doTestValidation(new User(null, "qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwrerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwrerqwerqwer", "e@mail.com", "password", 2000, Role.ROLE_USER), "name");
-        doTestValidation(new User(null, "name", "", "password", 2000, Role.ROLE_USER), "email");
-        doTestValidation(new User(null, "name", "e@mail.com", "pass", 2000, Role.ROLE_USER), "password");
-        doTestValidation(new User(null, "name", "e@mail.com", "passwordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpassw", 2000, Role.ROLE_USER), "password");
-        doTestValidation(new User(null, "name", "e@mail.com", "password", 9, Role.ROLE_USER), "caloriesPerDay");
-        doTestValidation(new User(null, "name", "e@mail.com", "password", 10001, Role.ROLE_USER), "caloriesPerDay");
+        doTestValidation("name", new User(null, "1", "e@mail.com", "password", 2000, Role.ROLE_USER));
+        doTestValidation("name", new User(null, "qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwrerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwrerqwerqwer", "e@mail.com", "password", 2000, Role.ROLE_USER));
+        doTestValidation("email", new User(null, "name", "", "password", 2000, Role.ROLE_USER));
+        doTestValidation("password", new User(null, "name", "e@mail.com", "pass", 2000, Role.ROLE_USER));
+        doTestValidation("password", new User(null, "name", "e@mail.com", "passwordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpassw", 2000, Role.ROLE_USER));
+        doTestValidation("caloriesPerDay", new User(null, "name", "e@mail.com", "password", 9, Role.ROLE_USER));
+        doTestValidation("caloriesPerDay", new User(null, "name", "e@mail.com", "password", 10001, Role.ROLE_USER));
     }
 
     @Override

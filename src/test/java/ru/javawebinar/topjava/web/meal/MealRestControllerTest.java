@@ -133,10 +133,10 @@ class MealRestControllerTest extends AbstractControllerTest {
     @Test
     void testValidationFail() throws Exception {
         LocalDateTime dateTime = of(2015, Month.JUNE, 1, 18, 0);
-        doTestValidation(new Meal(null, dateTime, "1", 300), "description");
-        doTestValidation(new Meal(null, dateTime, ";falksjdfsl;akdfj;lkjasd;flkjas;ldkfj;alskdjf;alskdjf;alsdkjfalskjdf;alskjdf;alskdjf;lakjsdf;alksdjf;alksjdf;alksdjf;al12", 300), "description");
-        doTestValidation(new Meal(null, dateTime, "description", 3), "calories");
-        doTestValidation(new Meal(null, dateTime, "description", 5001), "calories");
+        doTestValidation("description", new Meal(null, dateTime, "1", 300));
+        doTestValidation("description", new Meal(null, dateTime, ";falksjdfsl;akdfj;lkjasd;flkjas;ldkfj;alskdjf;alskdjf;alsdkjfalskjdf;alskjdf;alskdjf;lakjsdf;alksdjf;alksjdf;alksdjf;al12", 300));
+        doTestValidation("calories", new Meal(null, dateTime, "description", 3));
+        doTestValidation("calories", new Meal(null, dateTime, "description", 5001));
     }
 
     @Override
