@@ -8,6 +8,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,11 +52,17 @@ public class ExceptionInfoHandler {
     }
 
     @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)  // 422
-    @ExceptionHandler(BindException.class)
-    public ErrorInfo validationError(HttpServletRequest req, BindException e) {
+    @ExceptionHandler({BindException.class, MethodArgumentNotValidException.class})
+    public ErrorInfo validationError(HttpServletRequest req, Exception e) {
         ErrorType errorType = VALIDATION_ERROR;
+        BindingResult bindingResult;
+        if (e instanceof BindException) {
+            bindingResult = ((BindException)e).getBindingResult();
+        } else {
+            bindingResult = ((MethodArgumentNotValidException)e).getBindingResult();
+        }
         log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), ValidationUtil.getRootCause(e).toString());
-        return new ErrorInfo(req.getRequestURL(), errorType, ValidationUtil.getErrorResponse(e.getBindingResult()));
+        return new ErrorInfo(req.getRequestURL(), errorType, ValidationUtil.getErrorResponse(bindingResult));
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

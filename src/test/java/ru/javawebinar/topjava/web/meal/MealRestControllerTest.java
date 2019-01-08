@@ -10,11 +10,16 @@ import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
+import java.time.LocalDateTime;
+import java.time.Month;
+
+import static java.time.LocalDateTime.of;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.MealTestData.assertMatch;
 import static ru.javawebinar.topjava.TestUtil.*;
 import static ru.javawebinar.topjava.UserTestData.*;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
@@ -123,5 +128,24 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(USER)))
                 .andExpect(status().isOk())
                 .andExpect(getToMatcher(getWithExcess(MEALS, USER.getCaloriesPerDay())));
+    }
+
+    @Test
+    void testValidationFail() throws Exception {
+        LocalDateTime dateTime = of(2015, Month.JUNE, 1, 18, 0);
+        doTestValidation(new Meal(null, dateTime, "1", 300), "description");
+        doTestValidation(new Meal(null, dateTime, ";falksjdfsl;akdfj;lkjasd;flkjas;ldkfj;alskdjf;alskdjf;alsdkjfalskjdf;alskjdf;alskdjf;lakjsdf;alksdjf;alksjdf;alksdjf;al12", 300), "description");
+        doTestValidation(new Meal(null, dateTime, "description", 3), "calories");
+        doTestValidation(new Meal(null, dateTime, "description", 5001), "calories");
+    }
+
+    @Override
+    protected String getUrl() {
+        return REST_URL;
+    }
+
+    @Override
+    protected <T> String getContent(T obj) {
+        return JsonUtil.writeValue(obj);
     }
 }

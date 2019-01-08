@@ -119,4 +119,25 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(getUserMatcher(ADMIN, USER)));
     }
+
+    @Test
+    void testValidationFail() throws Exception {
+        doTestValidation(new User(null, "1", "e@mail.com", "password", 2000, Role.ROLE_USER), "name");
+        doTestValidation(new User(null, "qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwrerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwrerqwerqwer", "e@mail.com", "password", 2000, Role.ROLE_USER), "name");
+        doTestValidation(new User(null, "name", "", "password", 2000, Role.ROLE_USER), "email");
+        doTestValidation(new User(null, "name", "e@mail.com", "pass", 2000, Role.ROLE_USER), "password");
+        doTestValidation(new User(null, "name", "e@mail.com", "passwordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpassw", 2000, Role.ROLE_USER), "password");
+        doTestValidation(new User(null, "name", "e@mail.com", "password", 9, Role.ROLE_USER), "caloriesPerDay");
+        doTestValidation(new User(null, "name", "e@mail.com", "password", 10001, Role.ROLE_USER), "caloriesPerDay");
+    }
+
+    @Override
+    protected String getUrl() {
+        return REST_URL;
+    }
+
+    @Override
+    protected <T> String getContent(T obj) {
+        return jsonWithPassword((User) obj, ((User)obj).getPassword());
+    }
 }
