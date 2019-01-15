@@ -6,11 +6,14 @@ import org.springframework.test.web.servlet.ResultActions;
 import ru.javawebinar.topjava.TestUtil;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.util.exception.ErrorInfo;
+import ru.javawebinar.topjava.util.exception.ErrorType;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import java.util.Collections;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -139,5 +142,27 @@ class AdminRestControllerTest extends AbstractControllerTest {
     @Override
     protected <T> String getContent(T obj) {
         return jsonWithPassword((User) obj, ((User)obj).getPassword());
+    }
+
+    @Test
+    void testValidationFailOnUpdate() throws Exception {
+        doTestValidationOnUpdate("name", new User(USER_ID, "1", "e@mail.com", "password", 2000, Role.ROLE_USER));
+        doTestValidationOnUpdate("name", new User(USER_ID, "qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwrerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwrerqwerqwer", "e@mail.com", "password", 2000, Role.ROLE_USER));
+        doTestValidationOnUpdate("email", new User(USER_ID, "name", "", "password", 2000, Role.ROLE_USER));
+        doTestValidationOnUpdate("password", new User(USER_ID, "name", "e@mail.com", "pass", 2000, Role.ROLE_USER));
+        doTestValidationOnUpdate("password", new User(USER_ID, "name", "e@mail.com", "passwordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpassw", 2000, Role.ROLE_USER));
+        doTestValidationOnUpdate("caloriesPerDay", new User(USER_ID, "name", "e@mail.com", "password", 9, Role.ROLE_USER));
+        doTestValidationOnUpdate("caloriesPerDay", new User(USER_ID, "name", "e@mail.com", "password", 10001, Role.ROLE_USER));
+    }
+
+    private void doTestValidationOnUpdate(String field, User user) throws Exception {
+        ResultActions action = mockMvc.perform(put(REST_URL + user.getId())
+                .with(userHttpBasic(ADMIN))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonWithPassword(user, user.getPassword())))
+                .andExpect(status().isUnprocessableEntity());
+        ErrorInfo errorInfo = readFromJsonResultActions(action, ErrorInfo.class);
+        assertEquals(ErrorType.VALIDATION_ERROR, errorInfo.getType());
+        assertEquals(field, errorInfo.getDetail().split(" ")[0]);
     }
 }
